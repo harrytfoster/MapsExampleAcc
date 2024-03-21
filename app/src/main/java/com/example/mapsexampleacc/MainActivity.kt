@@ -60,26 +60,28 @@ fun MapContent() { // View Map
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewMap(){
-    var latitude by remember { mutableStateOf("") }
-    var longitude by remember { mutableStateOf("") }
-    var SearchLat by remember { mutableStateOf(0.0) }
-    var SearchLon by remember { mutableStateOf(0.0) }
+    var latitude by remember { mutableStateOf("") } // User entry Latitude
+    var longitude by remember { mutableStateOf("") } // User entry Longitude
+    var SearchLat by remember { mutableStateOf(0.0) } // For searching Latitude
+    var SearchLon by remember { mutableStateOf(0.0) } // For searching Longitude
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         AndroidView(modifier = Modifier.height(this.maxHeight-115.dp),factory = {
                 context ->
             MapView(context).apply()
-            {controller.setCenter(GeoPoint(SearchLat, SearchLon))
+            {
+                controller.setCenter(GeoPoint(SearchLat, SearchLon))
                 controller.setZoom(14.0)
                 setTileSource(TileSourceFactory.MAPNIK)
                 isClickable =true
-            }})
+            }},
+            update = {view -> view.controller.setCenter(GeoPoint(SearchLat, SearchLon))}) //  NEED THIS TO UPDATE MAP
         TextField(value = latitude, onValueChange = {latitude=it}, modifier = Modifier
             .align(Alignment.BottomStart)
             .padding(16.dp))
         TextField(value = longitude, onValueChange = {longitude=it}, modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(16.dp))
-        Button(onClick = { SearchLat = latitude.toDouble(); SearchLon = longitude.toDouble()}, modifier = Modifier
+        Button(onClick = { SearchLat = latitude.toDouble(); SearchLon = longitude.toDouble()}, modifier = Modifier // Updates search lat and long on click
             .align(Alignment.BottomEnd)
             .padding(16.dp)) {("Go!")}
     }
